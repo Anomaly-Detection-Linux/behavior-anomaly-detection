@@ -1,0 +1,17 @@
+timestamp,user,event_type,source_ip,raw_line
+2026-02-17T18:17:24.320089+00:00,edietz4,FAILED_LOGIN,,2026-02-17T18:17:24.320089+00:00 Ubuntu gdm-password]: pam_unix(gdm-password:auth): authentication failure; logname= uid=0 euid=0 tty=/dev/tty1 ruser= rhost=  user=edietz4
+2026-02-17T18:17:33.417186+00:00,edietz4,SUCCESS_LOGIN,,2026-02-17T18:17:33.417186+00:00 Ubuntu gdm-password]: pam_unix(gdm-password:session): session opened for user edietz4(uid=1000) by edietz4(uid=0)
+2026-02-17T18:35:48.298823+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:35:48.298823+00:00 Ubuntu sudo:  edietz4 : TTY=pts/0 ; PWD=/home/edietz4 ; USER=root ; COMMAND=/usr/bin/apt update
+2026-02-17T18:35:48.299177+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:35:48.299177+00:00 Ubuntu sudo: pam_unix(sudo:session): session opened for user root(uid=0) by edietz4(uid=1000)
+2026-02-17T18:35:59.791728+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:35:59.791728+00:00 Ubuntu sudo: pam_unix(sudo:session): session closed for user root
+2026-02-17T18:36:14.707791+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:36:14.707791+00:00 Ubuntu sudo:  edietz4 : TTY=pts/0 ; PWD=/home/edietz4 ; USER=root ; COMMAND=/usr/bin/apt install python3-pip
+2026-02-17T18:36:14.708513+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:36:14.708513+00:00 Ubuntu sudo: pam_unix(sudo:session): session opened for user root(uid=0) by edietz4(uid=1000)
+2026-02-17T18:36:41.345571+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:36:41.345571+00:00 Ubuntu sudo: pam_unix(sudo:session): session closed for user root
+2026-02-17T18:45:31.401384+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:45:31.401384+00:00 Ubuntu sudo:  edietz4 : TTY=pts/0 ; PWD=/home/edietz4 ; USER=root ; COMMAND=/usr/bin/apt install python3-numpy python3-pandas python3-sklearn
+2026-02-17T18:45:31.403674+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:45:31.403674+00:00 Ubuntu sudo: pam_unix(sudo:session): session opened for user root(uid=0) by edietz4(uid=1000)
+2026-02-17T18:46:07.957558+00:00,Ubuntu,SUDO_COMMAND,,2026-02-17T18:46:07.957558+00:00 Ubuntu sudo: pam_unix(sudo:session): session closed for user root
+2026-02-19T16:25:10.989631+00:00,edietz4,SUCCESS_LOGIN,,2026-02-19T16:25:10.989631+00:00 Ubuntu gdm-password]: pam_unix(gdm-password:session): session opened for user edietz4(uid=1000) by edietz4(uid=0)
+2026-02-19T16:27:45.912566+00:00,edietz4,SUCCESS_LOGIN,,2026-02-19T16:27:45.912566+00:00 Ubuntu gdm-password]: pam_unix(gdm-password:session): session opened for user edietz4(uid=1000) by edietz4(uid=0)
+2026-02-19T16:33:45.635108+00:00,edietz4,SUCCESS_LOGIN,,2026-02-19T16:33:45.635108+00:00 Ubuntu gdm-password]: pam_unix(gdm-password:session): session opened for user edietz4(uid=1000) by edietz4(uid=0)
+2026-02-19T16:38:21.510525+00:00,Ubuntu,SUDO_COMMAND,,2026-02-19T16:38:21.510525+00:00 Ubuntu sudo:  edietz4 : TTY=pts/1 ; PWD=/home/edietz4/behavior-anomaly-detection ; USER=root ; COMMAND=/usr/bin/cp /var/log/auth.log data/raw/auth.log
+2026-02-19T16:38:21.513156+00:00,Ubuntu,SUDO_COMMAND,,2026-02-19T16:38:21.513156+00:00 Ubuntu sudo: pam_unix(sudo:session): session opened for user root(uid=0) by edietz4(uid=1000)
