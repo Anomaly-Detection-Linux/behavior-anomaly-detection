@@ -9,9 +9,33 @@ Looks for these specific event types:
 """
 
 import csv
+import re
 
-# System accounts to ignore
-SYSTEM_USERS = {"gdm"}
+
+# Patterns for event types 
+SUCCESS_PATTERNS = [
+    "Accepted password",
+    "Accepted publickey",
+    "session opened for user"
+]
+
+FAILED_PATTERNS = [
+    "Failed password",
+    "Failed publickey",
+    "FAILED LOGIN",
+    "authentication failure"
+]
+
+SUDO_PATTERNS = [
+    "sudo",
+    "pam_unix(sudo:session)"
+]
+
+# Ignore system users
+SYSTEM_USERS = {
+    "root", "systemd", "gdm", "gdm-password",
+    "daemon", "nobody", "ubuntu"
+}
 
 # This function reads the raw log file and returns all lines as a list
 def read_logs(file_path: str) -> list[str]:
@@ -31,6 +55,44 @@ def parse_logs(file_path: str):
             if event is not None:
                 events.append(event)
     return events
+
+
+# Pattern matcher
+def matches_pattern(line: str, patterns: list[str]) -> bool:
+    return any(pattern in line for pattern in patterns)
+
+
+# Extract IP address if possible
+def pull_ip(line: str) -> str | None:
+    match = re.search(r'from ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', line)
+    if match:
+        return match.group(1)
+    
+    match = re.search(r'([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', line)
+    if match:
+        return match.group(1)
+    
+    return None
+
+
+# Extract user 
+def pull_user(line: str) -> str | None:
+    #user=xyz
+    match = re.search(r"user=([a-zA-Z0-9_-]+)", line)
+    if match: 
+        return match.group(1)
+    
+    #for user xyz
+    match = re.search(r"for (\w+)", line)
+    if match:
+        return match.group(1)
+    
+    #session opened for user xyz
+    match = re.search(r"user (\w+)", line)
+    if match:
+        return match.group(1)
+    
+    return None
     
 
 # This function reads one log line and structures it by event type
@@ -38,73 +100,64 @@ def parse_line(line: str) -> dict | None:
     # Split each line into "pieces" to collect identifiers
     pieces = line.split()
 
-    if len(pieces) < 6:
+    if len(pieces) < 5:
         return None
     
     # First piece is the timestamp
-    timestamp = pieces[0]
+    timestamp = " ".join(pieces[0:3])
+
+    user = pull_user(line)
+    source_ip = pull_ip(line)
+
+    # Ignore system users 
+    if(user in SYSTEM_USERS):
+        return None
 
 
     ### Event 1: Failed login attempt ###
-    if "authentication failure" in line:
-        try:
-            # Identify the user 
-            user = ""
-
-            for piece in pieces:
-                if piece.startswith("user="):
-                    user = piece.split("=")[1]
-
+    if matches_pattern(line, FAILED_PATTERNS):
             return{
                 "timestamp": timestamp,
                 "user": user,
                 "event_type": "FAILED_LOGIN",
-                "source_ip": None,
+                "source_ip": source_ip,
                 "raw_line": line.strip()
             }
-        except Exception:
-            return None
         
 
     ### Event 2: Successful login attempt ###
     # Only count actual login event and avoid systemd duplicate 
-    if "session opened for user" in line and "gdm-password" in line:
-        try:
-            # Identify the user first
-            user_name = pieces.index("user") + 1
-            user = pieces[user_name].split("(")[0]
-
-            if user in SYSTEM_USERS:
+    if matches_pattern(line, SUCCESS_PATTERNS):
+            if "cron" in line or "systemd" in line:
                 return None
-
 
             return{
                 "timestamp": timestamp,
                 "user": user,
                 "event_type": "SUCCESS_LOGIN",
-                "source_ip": None,
+                "source_ip": source_ip,
                 "raw_line": line.strip()
             }
-        except (ValueError, IndexError):
-            return None
         
     
     ### Event 3: Sudo usage ###
-    if "sudo" in line:
+    if matches_pattern(line, SUDO_PATTERNS):
         try:
             user = pieces[1]
+        except Exception as e:
+            print(f"[SUDO parse error] {e} | Line: {line.strip()}")
+            user = None
 
-            return{
-                "timestamp": timestamp,
-                "user": user,
-                "event_type": "SUDO_COMMAND",
-                "source_ip": None,
-                "raw_line": line.strip()
-            }
-        except (ValueError, IndexError):
+        if user in SYSTEM_USERS:
             return None
-        
-    # Ignore the line entirely if it does not match the three event types     
+
+        return{
+            "timestamp": timestamp,
+            "user": user,
+            "event_type": "SUDO_COMMAND",
+            "source_ip": source_ip,
+            "raw_line": line.strip()
+        }
     return None
 
 
