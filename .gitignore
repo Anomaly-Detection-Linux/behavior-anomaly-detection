@@ -209,3 +209,6 @@ __marimo__/
 # Ignore raw log files 
 data/raw/*
 !data/raw/.gitkeep
+
+# Ignore processed CSV files to reduce clutter
+data/processed/*.csv
