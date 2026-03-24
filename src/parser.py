@@ -82,13 +82,13 @@ def pull_user(line: str) -> str | None:
     if match: 
         return match.group(1)
     
-    #for user xyz
-    match = re.search(r"for (\w+)", line)
+    #session opened for user xyz(uid=...)
+    match = re.search(r"session opened for user (\w+)\(uid=", line)
     if match:
         return match.group(1)
     
-    #session opened for user xyz
-    match = re.search(r"user (\w+)", line)
+    #sudo lines: sudo: username :
+    match = re.search(r"sudo:\s+(\w+)\s+:", line)
     if match:
         return match.group(1)
     
@@ -105,12 +105,11 @@ def parse_line(line: str) -> dict | None:
     
     # First piece is the timestamp
     timestamp = " ".join(pieces[0:3])
-
     user = pull_user(line)
     source_ip = pull_ip(line)
 
     # Ignore system users 
-    if(user in SYSTEM_USERS):
+    if user in SYSTEM_USERS or user is None:
         return None
 
 
@@ -126,8 +125,8 @@ def parse_line(line: str) -> dict | None:
         
 
     ### Event 2: Successful login attempt ###
-    # Only count actual login event and avoid systemd duplicate 
     if matches_pattern(line, SUCCESS_PATTERNS):
+            #ignore cron/systemd
             if "cron" in line or "systemd" in line:
                 return None
 
@@ -143,12 +142,13 @@ def parse_line(line: str) -> dict | None:
     ### Event 3: Sudo usage ###
     if matches_pattern(line, SUDO_PATTERNS):
         try:
-            user = pieces[1]
+            if user is None and len(pieces) < 1: 
+                user = pieces[1]
         except Exception as e:
             print(f"[SUDO parse error] {e} | Line: {line.strip()}")
             user = None
 
-        if user in SYSTEM_USERS:
+        if user in SYSTEM_USERS or user is None:
             return None
 
         return{
