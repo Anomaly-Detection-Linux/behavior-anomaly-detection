@@ -1,0 +1,62 @@
+//-----------------------------------------------------------
+// CUSTOM AUTH DATASET WITH MULTIPLE USER ACTIVITY 
+// Target: Failed logins, Successful logins, Sudo usage
+//-----------------------------------------------------------
+
+auth
+
+
+2026-03-07T09:05:12.000000+00:00 SP-110 sshd[1101]: Accepted password for emma from 192.168.1.10 port 52001 ssh2
+2026-03-07T09:12:10.000000+00:00 SP-110 sshd[1201]: Accepted password for luke from 192.168.1.15 port 53422 ssh2
+2026-03-07T09:20:44.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/apt update
+
+2026-03-07T10:03:31.000000+00:00 SP-110 sshd[1302]: Accepted password for maya from 192.168.1.21 port 54011 ssh2
+2026-03-07T10:15:45.000000+00:00 SP-110 sshd[1305]: Accepted password for emma from 192.168.1.10 port 54033 ssh2
+2026-03-07T10:18:05.000000+00:00 SP-110 sshd[1307]: Failed password for maya from 192.168.1.21 port 54044 ssh2
+
+2026-03-07T11:14:52.000000+00:00 SP-110 sshd[1410]: Accepted password for ethan from 192.168.1.30 port 55110 ssh2
+2026-03-07T11:22:10.000000+00:00 SP-110 sudo:     emma : TTY=pts/2 ; PWD=/home/emma ; USER=root ; COMMAND=/usr/bin/apt update
+2026-03-07T11:26:18.000000+00:00 SP-110 sudo:     ethan : TTY=pts/1 ; PWD=/home/ethan ; USER=root ; COMMAND=/usr/bin/systemctl restart apache2
+
+2026-03-07T12:40:33.000000+00:00 SP-110 sshd[1455]: Accepted password for emma from 192.168.1.10 port 55300 ssh2
+
+2026-03-07T13:08:41.000000+00:00 SP-110 sshd[1505]: Accepted password for luke from 192.168.1.15 port 55801 ssh2
+2026-03-07T13:19:20.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/journalctl -xe
+
+2026-03-07T14:02:03.000000+00:00 SP-110 sshd[1602]: Accepted password for maya from 192.168.1.21 port 56044 ssh2
+
+2026-03-07T15:10:11.000000+00:00 SP-110 sshd[1650]: Accepted password for emma from 192.168.1.10 port 56200 ssh2
+2026-03-07T15:45:10.000000+00:00 SP-110 sshd[1701]: Failed password for ethan from 192.168.1.30 port 56501 ssh2
+2026-03-07T15:46:02.000000+00:00 SP-110 sshd[1702]: Accepted password for ethan from 192.168.1.30 port 56518 ssh2
+
+2026-03-07T16:11:55.000000+00:00 SP-110 sshd[1801]: Accepted password for luke from 192.168.1.15 port 57002 ssh2
+2026-03-07T16:13:08.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/apt upgrade
+
+
+2026-03-08T02:01:10.000000+00:00 SP-110 sshd[2001]: Failed password for luke from 203.0.113.44 port 60001 ssh2
+2026-03-08T02:01:20.000000+00:00 SP-110 sshd[2002]: Failed password for luke from 203.0.113.44 port 60002 ssh2
+2026-03-08T02:01:35.000000+00:00 SP-110 sshd[2003]: Failed password for luke from 203.0.113.44 port 60003 ssh2
+2026-03-08T02:02:01.000000+00:00 SP-110 sshd[2004]: Failed password for luke from 203.0.113.44 port 60004 ssh2
+2026-03-08T02:02:22.000000+00:00 SP-110 sshd[2005]: Failed password for luke from 203.0.113.44 port 60005 ssh2
+2026-03-08T02:03:10.000000+00:00 SP-110 sshd[2006]: Failed password for luke from 203.0.113.44 port 60006 ssh2
+2026-03-08T02:04:02.000000+00:00 SP-110 sshd[2007]: Failed password for luke from 203.0.113.44 port 60007 ssh2
+
+2026-03-08T02:05:11.000000+00:00 SP-110 sshd[2010]: Accepted password for luke from 203.0.113.44 port 60020 ssh2
+
+2026-03-08T02:10:10.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/cat /etc/shadow
+2026-03-08T02:11:03.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/passwd root
+2026-03-08T02:12:41.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/chmod 777 /etc/sudoers
+
+
+2026-03-08T09:14:15.000000+00:00 SP-110 sshd[2201]: Accepted password for maya from 192.168.1.21 port 61002 ssh2
+2026-03-08T09:20:33.000000+00:00 SP-110 sshd[2205]: Accepted password for emma from 192.168.1.10 port 61022 ssh2
+2026-03-08T09:23:50.000000+00:00 SP-110 sudo:     maya : TTY=pts/1 ; PWD=/home/maya ; USER=root ; COMMAND=/usr/bin/apt update
+
+2026-03-08T11:44:02.000000+00:00 SP-110 sshd[2301]: Accepted password for ethan from 192.168.1.30 port 62010 ssh2
+
+2026-03-08T14:01:55.000000+00:00 SP-110 sshd[2401]: Failed password for maya from 198.51.100.77 port 63001 ssh2
+2026-03-08T14:02:33.000000+00:00 SP-110 sshd[2402]: Failed password for maya from 198.51.100.77 port 63008 ssh2
+2026-03-08T14:03:14.000000+00:00 SP-110 sshd[2403]: Failed password for maya from 198.51.100.77 port 63015 ssh2
+
+2026-03-08T15:22:10.000000+00:00 SP-110 sshd[2501]: Accepted publickey for luke from 192.168.1.15 port 64001 ssh2
+2026-03-08T15:26:32.000000+00:00 SP-110 sudo:     luke : TTY=pts/0 ; PWD=/home/luke ; USER=root ; COMMAND=/usr/bin/tail -f /var/log/auth.log
