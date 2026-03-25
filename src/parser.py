@@ -90,20 +90,18 @@ def pull_ip(line: str) -> str | None:
 
 # Extract user 
 def pull_user(line: str) -> str | None:
-    #user=xyz
-    match = re.search(r"user=([a-zA-Z0-9_-]+)", line)
-    if match: 
-        return match.group(1)
-    
-    #session opened for user xyz(uid=...)
-    match = re.search(r"session opened for user (\w+)\(uid=", line)
-    if match:
-        return match.group(1)
-    
-    #sudo lines: sudo: username :
-    match = re.search(r"sudo:\s+(\w+)\s+:", line)
-    if match:
-        return match.group(1)
+    patterns = [
+        r"user=([a-zA-Z0-9_-]+)",
+        r"session opened for user (\w+)\(uid=",
+        r"sudo:\s+(\w+)\s+:",
+        r"Accepted (?:password|publickey) for ([a-zA-Z0-9_-]+) from",
+        r"Failed (?:password|publickey) for (?:invalid user )?([a-zA-Z0-9_-]+) from",
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, line)
+        if match:
+            return match.group(1)
     
     return None
     
@@ -117,47 +115,33 @@ def parse_line(line: str) -> dict | None:
     user = pull_user(line)
     source_ip = pull_ip(line)
 
-    # Ignore system users 
-    if not user or user in SYSTEM_USERS:
-        return None
+    event_type = None
 
 
     ### Event 1: Failed login attempt ###
     if matches_pattern(line, FAILED_PATTERNS):
-            return{
-                "timestamp": timestamp,
-                "user": user,
-                "event_type": "FAILED_LOGIN",
-                "source_ip": source_ip,
-                "raw_line": line.strip()
-            }
-        
-
+        event_type = "FAILED_LOGIN"
     ### Event 2: Successful login attempt ###
-    if matches_pattern(line, SUCCESS_PATTERNS):
-            #ignore cron/systemd
-            if "cron" in line or "systemd" in line:
-                return None
-
-            return{
-                "timestamp": timestamp,
-                "user": user,
-                "event_type": "SUCCESS_LOGIN",
-                "source_ip": source_ip,
-                "raw_line": line.strip()
-            }
-        
-    
+    elif matches_pattern(line, SUCCESS_PATTERNS):
+        if "cron" in line or "systemd" in line:
+            return None
+        event_type = "SUCCESS_LOGIN"
     ### Event 3: Sudo usage ###
-    if matches_pattern(line, SUDO_PATTERNS):
-        return{
-            "timestamp": timestamp,
-            "user": user,
-            "event_type": "SUDO_COMMAND",
-            "source_ip": source_ip,
-            "raw_line": line.strip()
-        }
-    return None
+    elif matches_pattern(line, SUDO_PATTERNS):
+        event_type = "SUDO_COMMAND"
+    else:
+        return None
+    
+    if not user or user in SYSTEM_USERS:
+        return None
+    
+    return{
+        "timestamp": timestamp,
+        "user": user,
+        "event_type": event_type,
+        "source_ip": source_ip,
+        "raw_line": line.strip()
+    }
 
 
 # This function saves all parsed events into a CSV file
