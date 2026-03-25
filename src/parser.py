@@ -62,6 +62,19 @@ def matches_pattern(line: str, patterns: list[str]) -> bool:
     return any(pattern in line for pattern in patterns)
 
 
+# Extract timestamp
+def pull_timestamp(line: str) -> str | None: 
+    #ISO
+    match = re.match(r'^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+[\+\-]\d{2}:\d{2})', line)
+    if match:
+        return match.group(1)
+    #syslog
+    match = re.match(r'^([A-Z][a-z]{2} +\d{1,2} \d{2}:\d{2}:\d{2})', line)
+    if match:
+        return match.group(1)
+    return None
+    
+
 # Extract IP address if possible
 def pull_ip(line: str) -> str | None:
     match = re.search(r'from ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', line)
@@ -97,19 +110,15 @@ def pull_user(line: str) -> str | None:
 
 # This function reads one log line and structures it by event type
 def parse_line(line: str) -> dict | None:
-    # Split each line into "pieces" to collect identifiers
-    pieces = line.split()
-
-    if len(pieces) < 5:
+    timestamp = pull_timestamp(line)
+    if not timestamp:
         return None
-    
-    # First piece is the timestamp
-    timestamp = " ".join(pieces[0:3])
+
     user = pull_user(line)
     source_ip = pull_ip(line)
 
     # Ignore system users 
-    if user in SYSTEM_USERS or user is None:
+    if not user or user in SYSTEM_USERS:
         return None
 
 
@@ -141,16 +150,6 @@ def parse_line(line: str) -> dict | None:
     
     ### Event 3: Sudo usage ###
     if matches_pattern(line, SUDO_PATTERNS):
-        try:
-            if user is None and len(pieces) < 1: 
-                user = pieces[1]
-        except Exception as e:
-            print(f"[SUDO parse error] {e} | Line: {line.strip()}")
-            user = None
-
-        if user in SYSTEM_USERS or user is None:
-            return None
-
         return{
             "timestamp": timestamp,
             "user": user,
