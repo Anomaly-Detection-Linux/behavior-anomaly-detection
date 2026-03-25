@@ -75,7 +75,7 @@ def pull_timestamp(line: str) -> str | None:
     return None
     
 
-# Extract IP address if possible
+# Extract IP address if applicable
 def pull_ip(line: str) -> str | None:
     match = re.search(r'from ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', line)
     if match:
