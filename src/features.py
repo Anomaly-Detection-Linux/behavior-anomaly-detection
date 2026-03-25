@@ -19,9 +19,13 @@ def extract_features(input_file, output_file):
         unique_source_ip=("source_ip", "nunique")
     ).reset_index()
 
-    features["login attempts"] = (
+    features["login_attempts"] = (
         features["successful_logins"] + features["failed_logins"]
     )
+
+    features["failed_ratio"] = (
+        features["failed_logins"] / features["login_attempts"]
+    ).fillna(0)
 
     features["hour_of_day"] = features["hour_window"].dt.hour
 

@@ -146,9 +146,10 @@ def parse_line(line: str) -> dict | None:
 
 # This function saves all parsed events into a CSV file
 def events_to_csv(events: list[dict], output_path: str) -> None:
-    fieldnames = ["timestamp", "user", "event_type", "source_ip", "raw_line"]
-
-    with open(output_path, "w", newline="", encoding="utf-8") as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(events)
+    import pandas as pd
+    df = pd.DataFrame(events)
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df["hour_window"] = df["timestamp"].dt.floor("H")
+    
+    fieldnames = ["timestamp", "hour_window", "user", "event_type", "source_ip", "raw_line"]
+    df.to_csv(output_path, index=False, columns=fieldnames)
