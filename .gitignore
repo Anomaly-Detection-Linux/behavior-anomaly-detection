@@ -207,7 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 # Ignore raw log files 
-data/raw/*
+data/raw/auth.log
 !data/raw/.gitkeep
 
 # Ignore processed CSV files to reduce clutter
