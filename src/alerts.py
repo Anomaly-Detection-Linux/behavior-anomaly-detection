@@ -3,13 +3,28 @@
 import pandas as pd
 from pathlib import Path
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Reads the models output file and generates alerts for anomalies with reason indicators
 # and other necessary information 
 def  generate_alerts(anomalies_file, alerts_csv, report_file, top_n = 5):
     df = pd.read_csv(anomalies_file)
 
-    df.to_csv(alerts_csv, index=False)
+    if "anomaly_label" in df.columns:
+        df = df[df["anomaly_label"] == -1].copy()
+
+
+    alert_columns = [
+        "timestamp",
+        "user",
+        "event_type",
+        "source_ip",
+        "anomaly_score",
+        "severity",
+        "anomaly_reason",
+    ]
+    df[alert_columns].to_csv(alerts_csv, index=False)
+
 
     # Generate a summary 
     total_anomalies = len(df)
@@ -33,7 +48,9 @@ def  generate_alerts(anomalies_file, alerts_csv, report_file, top_n = 5):
     # Print first few anomalies to command line 
     print(f"\nFirst {top_n} anomalies (timestamp | user | event_type | score): ")
     for _, row in df.head(top_n).iterrows():
-        print(f"{row['timestamp']} | {row['user']} | {row['event_type']} | score: {row['anomaly_score']:.2f}")
+        print(f"{row['timestamp']} | {row['user']} | {row['event_type']}")
+        print(f"Score: {row['anomaly_score']:.2f} | Severity: {row['severity']}")
+        print(f"Reason: {row['anomaly_reason']}")
         print(f"Raw log: {row['raw_line']}\n")
 
     # Create human-readable report 
@@ -52,23 +69,39 @@ def  generate_alerts(anomalies_file, alerts_csv, report_file, top_n = 5):
 
         f.write("\nDescription of Anomalies: \n")
         for _, row in df.iterrows():
-            f.write(f"Timestamp: {row['timestamp']} | User: {row['user']} | "
-                    f"Event Type: {row['event_type']} | Anomaly Score: {row['anomaly_score']:.2f}\n"
+            f.write(
+            f"Timestamp: {row['timestamp']} | User: {row['user']} | "
+            f"Event Type: {row['event_type']} | "
+            f"Anomaly Score: {row['anomaly_score']:.2f} | "
+            f"Severity: {row['severity']}\n"
             )
+            f.write(f"Reason: {row['anomaly_reason']}\n")
             f.write(f"  Raw log: {row['raw_line']}\n\n")
 
 
     # Create plots for anomalies 
-    df['timestamp'] = pd.to_datetime(df['timestamp'])
-    for col in ['login_attempts', 'failed_logins', 'sudo_usage']:
-        if col in df.columns:
+    plot_df = df.groupby(["user", "hour_window"], as_index=False).agg({
+        "failed_logins": "max",
+        "sudo_usage": "max",
+        "login_attempts": "max"
+    })
+    plot_df["hour_window"] = pd.to_datetime(plot_df["hour_window"], utc=True)
+    plot_df = plot_df.sort_values(by="hour_window")
+
+
+    for col in ["login_attempts", "failed_logins", "sudo_usage"]:
+        if col in plot_df.columns:
             plt.figure(figsize=(10,4))
-            plt.plot(df['timestamp'], df[col], label=col)
-            plt.scatter(df['timestamp'], df[col], c='red', label='Anomaly')
+
+            for user in plot_df["user"].unique():
+                user_df = plot_df[plot_df["user"] == user].sort_values("hour_window")
+                plt.scatter(user_df["hour_window"], user_df[col], label=user)
+
             plt.xlabel('Time')
             plt.ylabel(col)
-            plt.title(f'{col} over time with anomalies')
+            plt.title(f"{col} anomalies by user")
             plt.legend()
+            plt.xticks(rotation=45, ha="right")
             plt.tight_layout()
             plt.savefig(f"data/output/{col}_anomalies.png")
             plt.close()

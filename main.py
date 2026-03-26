@@ -12,7 +12,7 @@ def main():
     print("SP-110-TESTING")
 
     # Define the filepaths 
-    input_path = "data/custom_auth.log"                 #raw log file
+    input_path = "data/raw/custom_auth.log"                 #raw log file
     events_output = "data/processed/events.csv"         #parsed events
     features_output = "data/processed/features.csv"     #extracted features 
     anomalies_output = "data/processed/anomalies.csv"   #model output 
