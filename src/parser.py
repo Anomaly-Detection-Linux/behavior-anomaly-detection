@@ -36,13 +36,6 @@ SYSTEM_USERS = {
     "root", "systemd", "gdm", "gdm-password",
     "daemon", "nobody", "ubuntu"
 }
-
-# This function reads the raw log file and returns all lines as a list
-def read_logs(file_path: str) -> list[str]:
-    # 'errors="ignore"' to prevent the program from crashing in 
-    # case malformed characters are encountered. 
-    with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-        return f.readlines()
     
 
 # This function reads the log file and parses all relevant lines
