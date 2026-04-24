@@ -58,7 +58,7 @@ The system follows a pipeline-based architecture:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Anomaly-Detection-Linux/SP-110-Red-Linux.git
+git clone https://github.com/Anomaly-Detection-Linux/behavior-anomaly-detection
 cd SP-110-Red-Linux
 ```
 ### 2. Install Dependencies 
