@@ -12,7 +12,12 @@ def main():
     print("SP-110-TESTING")
 
     # Define the filepaths 
-    input_path = "data/raw/custom_auth.log"                 #raw log file
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Usage: python3 main.py <log_file>")
+        exit()
+    log_file = sys.argv[1]               
     events_output = "data/processed/events.csv"         #parsed events
     features_output = "data/processed/features.csv"     #extracted features 
     anomalies_output = "data/processed/anomalies.csv"   #model output 
