@@ -71,9 +71,13 @@ pip install -r requirements.txt
 sudo apt install python3-pip
 ```
 
-### 3. Run the Program 
+### 3. Run the Program
+
 ```bash
-python3 main.py
+python3 main.py data/raw/auth.log
+```
+```md
+> You can replace `data/raw/auth.log` with any valid Linux authentication log file.
 ```
 
 ---
