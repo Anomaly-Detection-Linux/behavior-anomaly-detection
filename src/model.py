@@ -32,6 +32,7 @@ def run_model(input_file: str, events_file: str) -> pd.DataFrame:
     features_df["anomaly_score"] = clf.decision_function(scaled_data) * -1 
     features_df["anomaly_reason"] = features_df.apply(get_anomaly_reason, axis=1)
     features_df["severity"] = features_df.apply(get_severity_level, axis=1)
+    print(features_df["failed_ratio"].dtype)
 
     events_df = pd.read_csv(events_file)
     events_df["hour_window"] = pd.to_datetime(events_df["hour_window"])

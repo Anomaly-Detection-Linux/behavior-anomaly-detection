@@ -209,6 +209,7 @@ __marimo__/
 # Ignore raw log files 
 data/raw/auth.log
 !data/raw/.gitkeep
+!data/raw/custom_auth.log
 
 # Ignore processed CSV files to reduce clutter
 data/processed/*.csv

@@ -27,8 +27,8 @@ def main():
 
     # Parse the log file into structured events 
     try:
-        events = parse_logs(input_path)
-        print(f"Parsed {len(events)} events from {input_path}")
+        events = parse_logs(log_file)
+        print(f"Parsed {len(events)} events from {log_file}")
 
         # Verify the first few parsed events 
         print("\nVerifying first 3 lines: ")
